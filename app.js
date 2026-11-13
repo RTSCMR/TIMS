@@ -323,7 +323,11 @@
     drawCounter(res.fC, res.connC);
     for (const k in ledEls) ledEls[k].setAttribute('fill', res.leds[k] ? '#ff3a2a' : '#4a1210');
     const hint = $('#hint');
-    if (res.conflicts) { hint.textContent = 'تنبيه: فيه مخرجين موصلين ببعض بنفس السلك. كل سلك لازم يبدأ من مخرج واحد ويروح لمداخل.'; hint.classList.add('warn'); }
+    if (res.conflicts) {
+      const nm = k => { const [id, n] = k.split('.'), m = mod(id), so = TYPES[m.type].sockets.find(x => x[0] === n); return TYPES[m.type].title.join(' ') + ' (' + (so[5] || n) + ')'; };
+      hint.textContent = 'تنبيه: مخرجين موصلين ببعض: ' + res.clash.map(g => g.map(nm).join(' مع ')).join('، و ') + '. المخرج لازم يروح لمدخل، مو لمخرج ثاني. اضغط على السلك اللي بينهم واحذفه.';
+      hint.classList.add('warn');
+    }
     else { hint.textContent = HINT; hint.classList.remove('warn'); }
     updateGuide(); drawScope(); updateMeas();
   }

@@ -178,8 +178,12 @@
     const par = {}; const find = k => { while (par[k] !== k) { par[k] = par[par[k]]; k = par[k]; } return k; };
     for (const k in idx) par[k] = k;
     for (const w of st.wires) if (idx[w.a] && idx[w.b]) par[find(w.a)] = find(w.b);
-    const driver = {}, conflicts = [];
-    for (const k in idx) if (idx[k].out) { const r = find(k); if (driver[r] === undefined) driver[r] = idx[k].i; else if (!conflicts.includes(r)) conflicts.push(r); }
+    const driver = {}, dkey = {}, conflicts = [], clash = [];
+    for (const k in idx) if (idx[k].out) {
+      const r = find(k);
+      if (driver[r] === undefined) { driver[r] = idx[k].i; dkey[r] = k; }
+      else { if (!conflicts.includes(r)) { conflicts.push(r); clash.push([dkey[r]]); } clash[conflicts.indexOf(r)].push(k); }
+    }
     const src = key => (idx[key] ? (driver[find(key)] || 0) : 0);
     const same = (a, b) => !!(idx[a] && idx[b]) && find(a) === find(b);
     const V = new Float64Array(n), hints = {}, leds = {}, ends = [], fns = new Map();
@@ -200,7 +204,7 @@
       });
       if (f) steps.push(f);
     }
-    return { V, steps, src, same, hints, leds, ends, conflicts: conflicts.length };
+    return { V, steps, src, same, hints, leds, ends, conflicts: conflicts.length, clash };
   }
 
   function stats(buf, i0, n, dt) {
@@ -250,7 +254,7 @@
     }
     let fC = 0;
     if (iC) { if (b.hints[iC]) fC = b.hints[iC]; else { const s = stats(C, 0, nMain, dt); fC = (s && s.freq) || 0; } }
-    return { dt, A, B, i0, nWin, connA: !!iA, connB: !!iB, connC: !!iC, fC, leds: b.leds, conflicts: b.conflicts, same: b.same };
+    return { dt, A, B, i0, nWin, connA: !!iA, connB: !!iB, connC: !!iC, fC, leds: b.leds, conflicts: b.conflicts, clash: b.clash, same: b.same };
   }
 
   const api = { TYPES, phys, knobDef, build, run, stats };
