@@ -346,7 +346,7 @@
   }
   function updateGuide() {
     const L = LABS[lab], h = helpers(), list = L.steps.filter(s => !s.h);
-    document.querySelectorAll('#guide li[data-step]').forEach(li => { const s = list[+li.dataset.step]; li.classList.toggle('ok', !!(s.ok && s.ok(h))); });
+    document.querySelectorAll('#guide li[data-step]').forEach(li => { const s = list[+li.dataset.step]; li.classList.toggle('ok', !res.conflicts && !!(s.ok && s.ok(h))); });
     const tr = $('#truth'); if (!tr) return; tr.hidden = !ui.cheat;
     if (ui.cheat) tr.querySelector('dl').innerHTML = L.truth(h).map(r => `<div><dt>${r[0]}:</dt> <dd>${r[1]}</dd></div>`).join('');
   }
