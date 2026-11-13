@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محاكي TIMS و PicoScope</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">محاكي TIMS <span>ECE371 · اللابات العملية</span></div>
+  <nav class="labs" id="labs" aria-label="اللابات"></nav>
+  <div class="seg" id="view" role="group" aria-label="طريقة العرض">
+    <button type="button" data-view="dev">الجهاز</button>
+    <button type="button" data-view="both" class="on">النافذتين</button>
+    <button type="button" data-view="scope">السكوب</button>
+  </div>
+</header>
+
+<main id="main" class="both">
+  <section class="pane dev" aria-label="جهاز TIMS">
+    <div class="bar">
+      <div class="swatches" id="swatches" role="group" aria-label="لون السلك"></div>
+      <label class="chk"><input type="checkbox" id="cheat"> أظهر قيم الكنوبات</label>
+      <span class="grow"></span>
+      <button type="button" class="btn" id="clear">امسح الأسلاك</button>
+      <button type="button" class="btn" id="reset">ابدأ من الصفر</button>
+    </div>
+    <p class="hint" id="hint"></p>
+    <div class="rack"><svg id="rack" viewBox="0 0 880 640" role="img" aria-label="واجهة جهاز Emona TIMS"></svg></div>
+    <div class="kpanel" id="kpanel">
+      <span class="kname" id="kname">اضغط على أي كنوب في الجهاز عشان تلفه من هنا</span>
+      <div class="kctl">
+        <button type="button" data-d="-0.02" aria-label="نقص كثير">−−</button>
+        <button type="button" data-d="-0.0005" aria-label="نقص شوي">−</button>
+        <input type="range" id="kslider" min="0" max="1" step="0.0005" value="0.5" aria-label="موضع الكنوب" disabled>
+        <button type="button" data-d="0.0005" aria-label="زيد شوي">+</button>
+        <button type="button" data-d="0.02" aria-label="زيد كثير">++</button>
+      </div>
+    </div>
+    <div class="guide" id="guide"></div>
+  </section>
+
+  <div class="split" id="split" role="separator" aria-orientation="vertical" tabindex="0" aria-label="غيّر حجم النافذتين"></div>
+
+  <section class="pane scope" dir="ltr" aria-label="PicoScope">
+    <div class="p6-title"><span class="p6-ico"></span>PicoScope 6 <small dir="rtl">محاكاة للتدريب</small></div>
+    <div class="p6-menu" aria-hidden="true"><span>File</span><span>Edit</span><span>Views</span><span>Measurements</span><span>Tools</span><span>Help</span></div>
+    <div class="p6-tools">
+      <div class="grp"><button type="button" id="tprev" aria-label="timebase أسرع">◀</button><select id="tdiv" aria-label="Timebase"></select><button type="button" id="tnext" aria-label="timebase أبطأ">▶</button></div>
+      <div class="grp dim"><span>1 MS</span></div><div class="grp dim"><span>x 1</span></div>
+    </div>
+    <div class="p6-tools">
+      <div class="grp chA"><b>A</b><button type="button" data-rstep="A:-1" aria-label="A range أصغر">◀</button><select id="rA" aria-label="Channel A range"></select><button type="button" data-rstep="A:1" aria-label="A range أكبر">▶</button><span class="dc">DC</span></div>
+      <div class="grp chB"><b>B</b><button type="button" data-rstep="B:-1" aria-label="B range أصغر">◀</button><select id="rB" aria-label="Channel B range"></select><button type="button" data-rstep="B:1" aria-label="B range أكبر">▶</button><span class="dc">DC</span></div>
+    </div>
+    <div class="plot" id="plot"><canvas id="cv"></canvas></div>
+    <div class="p6-status">
+      <span>Running</span><span class="play">▶</span><span class="stop">■</span>
+      <label>Trigger <select id="trig"><option value="none">None</option><option value="A">Auto · A</option><option value="B">Auto · B</option></select></label>
+      <span class="grow"></span>
+      <span>Measurements</span>
+      <label class="chk"><input type="checkbox" id="rulers"> Rulers</label>
+    </div>
+    <div class="readout" id="readout"></div>
+    <table class="meas" id="meas">
+      <thead><tr><th>Channel</th><th>Maximum</th><th>Minimum</th><th>Peak to Peak</th><th>DC Average</th><th>Frequency</th></tr></thead>
+      <tbody><tr class="rA"><td>A</td><td></td><td></td><td></td><td></td><td></td></tr><tr class="rB"><td>B</td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+    </table>
+  </section>
+</main>
+
+<script src="engine.js"></script>
+<script src="labs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
