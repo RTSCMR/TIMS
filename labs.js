@@ -163,7 +163,7 @@
       steps: [
         { t: `وصّل ${b('AUDIO sin')} بمدخل ${b('ANALOG')} في العداد واضبط ${b('Δf')} على ${m('2.000 kHz')}.`, ok: h => h.C('audio.sin', 'counter.analog') && h.near(h.v('audio', 'f'), 2000, 30) },
         { t: `وصّل ${b('VARIABLE DC')} بالسكوب (مدخل A) واضبطه على ${m('−1.2 V')}. هذا السلك مؤقت، بتنقله للـADDER في الخطوة الجاية.`, ok: h => h.near(h.v('dc', 'v'), -1.2, 0.06) && (h.S('dc.out') || h.C('dc.out', 'adder.b')) },
-        { t: `وصّل ${b('AUDIO sin')} بـ${b('ADDER A')}، وانقل سلك الـDC من السكوب إلى ${b('ADDER B')}، واضبط ${b('G')} و ${b('g')} على ${m('−1')}.`, ok: h => h.C('audio.sin', 'adder.a') && h.C('dc.out', 'adder.b') && h.near(h.v('adder', 'G'), -1, 0.06) && h.near(h.v('adder', 'g'), -1, 0.06) },
+        { t: `وصّل ${b('AUDIO sin')} بـ${b('ADDER A')}، وانقل سلك الـDC من السكوب إلى ${b('ADDER B')}، واضبط ${b('G')} و ${b('g')} على ${m('−1')}. اضبطهم الحين وخرج الـADDER على السكوب مؤقتاً (Max = 3.20 V و Min = −0.80 V)، لأنه بعد ما يروح على REF ما تقدر تشوفه.`, ok: h => h.C('audio.sin', 'adder.a') && h.C('dc.out', 'adder.b') && h.near(h.v('adder', 'G'), -1, 0.06) && h.near(h.v('adder', 'g'), -1, 0.06) },
         { t: `وصّل خرج الـADDER ${b('GA+gB')} بـ${b('REF')} في UTILITIES (قسم COMPARATOR).`, ok: h => h.C('adder.out', 'util.ref') },
         { t: `وصّل ${b('8.3kHz TTL')} من MASTER SIGNALS بـ${b('CLK')} في TWIN PULSE GENERATOR، وخل ${b('WIDTH')} و ${b('DELAY')} بالنص.`, ok: h => h.C('master.clk8', 'twin.clk') && h.near(h.v('twin', 'width'), 14e-6, 4e-6) && h.near(h.v('twin', 'delay'), 65e-6, 15e-6) },
         { t: `وصّل ${b('Q2')} من الـTWIN بـ${b('IN')} حق الـCOMPARATOR.`, ok: h => h.C('twin.q2', 'util.cin') },
