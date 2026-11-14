@@ -85,8 +85,8 @@
     lpf: {
       title: ['TUNEABLE', 'LPF'], w: 100, h: 290,
       sockets: [['clk', 'o', 't', 50, 58, 'CLK'], ['in', 'i', 'a', 27, 252, 'IN'], ['out', 'o', 'a', 73, 252, 'OUT']],
-      knobs: [{ n: 'tune', x: 50, y: 104, l: 'TUNE', def: 0.5, ...lin(0, 1), fmt: v => v.toFixed(2) }, { n: 'gain', x: 50, y: 162, l: 'GAIN', def: 0.3, ...lin(0, 6), fmt: v => '×' + v.toFixed(2) }],
-      switches: [{ n: 'wide', x: 50, y: 208, l: ['NORM', 'WIDE'] }],
+      knobs: [{ n: 'tune', x: 50, y: 104, l: 'TUNE', def: 0.5, ...lin(0, 1), fmt: v => v.toFixed(2) }, { n: 'gain', x: 50, y: 164, l: 'GAIN', def: 0.3, ...lin(0, 6), fmt: v => '×' + v.toFixed(2) }],
+      switches: [{ n: 'wide', x: 50, y: 228, l: ['NORM', 'WIDE'] }],
       fc(m) { const p = m.p.tune; return m.sw && m.sw.wide ? 2000 * Math.pow(6, p) : 900 * Math.pow(5000 / 900, p); },
       sim(c) {
         const fc = TYPES.lpf.fc(c.m), G = c.p('gain'), iin = c.in('in'), o = c.out('out'), V = c.V;
