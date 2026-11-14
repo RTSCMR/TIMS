@@ -42,11 +42,11 @@
   // ---------- Lab 9 ----------
   const W9 = [['audio.cos', 'counter.analog', 'r'], ['audio.cos', 'dsw.in1', 'b'], ['audio.cos', 'scope.a1', 'r'], ['master.clk8', 'twin.clk', 'y'],
     ['twin.q1', 'dsw.c1', 'b'], ['dsw.out', 'scope.a2', 'k'], ['dsw.out', 'lpf.in', 'b'], ['lpf.out', 'scope.b2', 'y']];
-  const K9 = f => [['audio', 'f', f], ['twin', 'width', 90e-6], ['twin', 'delay', 10e-6], ['lpf', 'tune', 1], ['lpf', 'gain', 1.33]];
+  const K9 = f => [['audio', 'f', f], ['twin', 'width', 25e-6], ['twin', 'delay', 10e-6], ['lpf', 'tune', 1], ['lpf', 'gain', 4.8]];
   // ---------- Lab 10 ----------
   const W10 = [['audio.sin', 'counter.analog', 'b'], ['audio.sin', 'adder.a', 'b'], ['dc.out', 'adder.b', 'y'], ['adder.out', 'util.ref', 'r'],
     ['master.clk8', 'twin.clk', 'r'], ['twin.q2', 'util.cin', 'k'], ['util.cout', 'scope.a1', 'r'], ['audio.sin', 'scope.a2', 'y']];
-  const K10 = dc => [['audio', 'f', 2000], ['dc', 'v', dc], ['adder', 'G', -1], ['adder', 'g', -1], ['twin', 'width', 47.5e-6], ['twin', 'delay', 60e-6]];
+  const K10 = dc => [['audio', 'f', 2000], ['dc', 'v', dc], ['adder', 'G', -1], ['adder', 'g', -1], ['twin', 'width', 14e-6], ['twin', 'delay', 65e-6]];
 
   const LABS = {
     5: {
@@ -130,8 +130,8 @@
         { t: `وصّل ${b('AUDIO cos')} بمدخل ${b('ANALOG')} في العداد واضبط ${b('Δf')} على تردد الرسالة (${m('1 kHz')} بالمانيوال، وباللاب اشتغلتوا على ${m('≈ 2 kHz')}).`, ok: h => h.C('audio.cos', 'counter.analog') && (h.near(h.v('audio', 'f'), 1000, 20) || h.near(h.v('audio', 'f'), 2000, 40)) },
         { t: `وصّل ${b('AUDIO cos')} بـ${b('IN 1')} في DUAL ANALOG SWITCH.`, ok: h => h.C('audio.cos', 'dsw.in1') },
         { t: `وصّل ${b('AUDIO cos')} بالسكوب (CH1 مدخل A) عشان تشوف الرسالة.`, ok: h => h.S('audio.cos') },
-        { t: `وصّل ${b('8.3kHz TTL')} من MASTER SIGNALS بـ${b('CLK')} في TWIN PULSE GENERATOR، ولف ${b('WIDTH')} للآخر.`, ok: h => h.C('master.clk8', 'twin.clk') && h.v('twin', 'width') > 86e-6 },
-        { t: `وصّل خرج الـTWIN (${b('Q1')}) بـ${b('CONTROL 1')} في DUAL ANALOG SWITCH.`, ok: h => h.C('twin.q1', 'dsw.c1') || h.C('twin.q2', 'dsw.c1') },
+        { t: `وصّل ${b('8.3kHz TTL')} من MASTER SIGNALS بـ${b('CLK')} في TWIN PULSE GENERATOR، ولف ${b('WIDTH')} للآخر.`, ok: h => h.C('master.clk8', 'twin.clk') && h.v('twin', 'width') > 23.5e-6 },
+        { t: `وصّل خرج الـTWIN (${b('Q1')}، أو المقبس الأصفر ${b('Q1 (AC)')} اللي فوقه زي تشبيك الدكتورة) بـ${b('CONTROL 1')} في DUAL ANALOG SWITCH.`, ok: h => h.C('twin.q1', 'dsw.c1') || h.C('twin.q1ac', 'dsw.c1') || h.C('twin.q2', 'dsw.c1') },
         { t: `وصّل ${b('OUT')} حق الـDUAL ANALOG SWITCH بالسكوب (CH2 مدخل A) وشوف الإشارة المعيّنة.`, ok: h => h.S('dsw.out') },
         { t: `وصّل نفس الـ${b('OUT')} بـ${b('IN')} في TUNEABLE LPF.`, ok: h => h.C('dsw.out', 'lpf.in') },
         { t: `وصّل ${b('OUT')} حق الـLPF بالسكوب (CH2 مدخل B وحوّل مفتاح CH2 على B). لف ${b('TUNE')} للآخر، واضبط ${b('GAIN')} لين ارتفاعها يساوي الرسالة.`, ok: h => h.S('lpf.out') && h.v('lpf', 'tune') > 0.95 },
@@ -165,7 +165,7 @@
         { t: `وصّل ${b('VARIABLE DC')} بالسكوب (مدخل A) واضبطه على ${m('−1.2 V')}. هذا السلك مؤقت، بتنقله للـADDER في الخطوة الجاية.`, ok: h => h.near(h.v('dc', 'v'), -1.2, 0.06) && (h.S('dc.out') || h.C('dc.out', 'adder.b')) },
         { t: `وصّل ${b('AUDIO sin')} بـ${b('ADDER A')}، وانقل سلك الـDC من السكوب إلى ${b('ADDER B')}، واضبط ${b('G')} و ${b('g')} على ${m('−1')}.`, ok: h => h.C('audio.sin', 'adder.a') && h.C('dc.out', 'adder.b') && h.near(h.v('adder', 'G'), -1, 0.06) && h.near(h.v('adder', 'g'), -1, 0.06) },
         { t: `وصّل خرج الـADDER ${b('GA+gB')} بـ${b('REF')} في UTILITIES (قسم COMPARATOR).`, ok: h => h.C('adder.out', 'util.ref') },
-        { t: `وصّل ${b('8.3kHz TTL')} من MASTER SIGNALS بـ${b('CLK')} في TWIN PULSE GENERATOR، وخل ${b('WIDTH')} و ${b('DELAY')} بالنص.`, ok: h => h.C('master.clk8', 'twin.clk') && h.near(h.v('twin', 'width'), 47.5e-6, 10e-6) && h.near(h.v('twin', 'delay'), 60e-6, 12e-6) },
+        { t: `وصّل ${b('8.3kHz TTL')} من MASTER SIGNALS بـ${b('CLK')} في TWIN PULSE GENERATOR، وخل ${b('WIDTH')} و ${b('DELAY')} بالنص.`, ok: h => h.C('master.clk8', 'twin.clk') && h.near(h.v('twin', 'width'), 14e-6, 4e-6) && h.near(h.v('twin', 'delay'), 65e-6, 15e-6) },
         { t: `وصّل ${b('Q2')} من الـTWIN بـ${b('IN')} حق الـCOMPARATOR.`, ok: h => h.C('twin.q2', 'util.cin') },
         { t: `وصّل ${b('OUT')} حق الـCOMPARATOR بالسكوب (CH1 مدخل A). هذي إشارة الـPWM.`, ok: h => h.S('util.cout') },
         { t: `وصّل ${b('AUDIO sin')} بالسكوب (CH2) عشان تشوف الرسالة فوق النبضات.`, ok: h => h.S('audio.sin') }

@@ -53,18 +53,23 @@
     },
     twin: {
       title: ['TWIN PULSE', 'GENERATOR'], w: 100, h: 290,
-      sockets: [['q1', 'o', 't', 50, 138, 'Q1'], ['q2', 'o', 't', 50, 228, 'Q2'], ['clk', 'i', 't', 50, 264, 'CLK']],
-      knobs: [{ n: 'width', x: 50, y: 92, l: 'WIDTH', def: 0.3, ...lin(5e-6, 90e-6), fmt: fUs }, { n: 'delay', x: 50, y: 182, l: 'DELAY', def: 0.2, ...lin(10e-6, 110e-6), fmt: fUs }],
-      leds: [{ n: 'error', x: 78, y: 52, l: 'ERROR' }],
+      // Layout follows the real panel: WIDTH, Q2, DELAY, the yellow AC-coupled Q1, then CLK and Q1 at the bottom.
+      sockets: [['q2', 'o', 't', 75, 136, 'Q2'], ['q1ac', 'o', 'a', 75, 206, 'Q1 (AC)'], ['clk', 'i', 't', 27, 258, 'CLK'], ['q1', 'o', 't', 73, 258, 'Q1']],
+      knobs: [{ n: 'width', x: 38, y: 98, l: 'WIDTH', def: 0.5, ...lin(3e-6, 25e-6), fmt: fUs }, { n: 'delay', x: 38, y: 178, l: 'DELAY', def: 0.5, ...lin(10e-6, 120e-6), fmt: fUs }],
+      leds: [{ n: 'error', x: 78, y: 50, l: 'ERROR' }],
       sim(c) {
-        const w = c.p('width'), d = c.p('delay'), ck = c.in('clk'), o1 = c.out('q1'), o2 = c.out('q2'), V = c.V;
-        let prev = false, tE = -Infinity, per = Infinity;
-        c.onEnd(() => c.led('error', d + w > per * 1.01));
+        const w = c.p('width'), d = c.p('delay'), ck = c.in('clk'), o1 = c.out('q1'), o2 = c.out('q2'), oa = c.out('q1ac'), V = c.V;
+        const a = 1 - Math.exp(-c.dt / 1e-3);
+        let prev = false, tE = -Infinity, per = Infinity, avg = 0;
+        // Emona: the ERROR LED lights when 2·width + delay is longer than the clock period.
+        c.onEnd(() => c.led('error', 2 * w + d > per * 1.01));
         return t => {
           const hi = V[ck] > 1.5;
           if (hi && !prev) { if (tE > -Infinity) per = t - tE; tE = t; }
           prev = hi; const ts = t - tE;
-          V[o1] = ts < w ? 5 : 0; V[o2] = (ts >= d && ts < d + w) ? 5 : 0;
+          const q = ts < w ? 5 : 0;
+          V[o1] = q; V[o2] = (ts >= d && ts < d + w) ? 5 : 0;
+          avg += a * (q - avg); V[oa] = q - avg;
         };
       }
     },
@@ -80,7 +85,7 @@
     lpf: {
       title: ['TUNEABLE', 'LPF'], w: 100, h: 290,
       sockets: [['clk', 'o', 't', 50, 58, 'CLK'], ['in', 'i', 'a', 27, 252, 'IN'], ['out', 'o', 'a', 73, 252, 'OUT']],
-      knobs: [{ n: 'tune', x: 50, y: 104, l: 'TUNE', def: 0.5, ...lin(0, 1), fmt: v => v.toFixed(2) }, { n: 'gain', x: 50, y: 162, l: 'GAIN', def: 0.3, ...lin(0, 2.5), fmt: v => '×' + v.toFixed(2) }],
+      knobs: [{ n: 'tune', x: 50, y: 104, l: 'TUNE', def: 0.5, ...lin(0, 1), fmt: v => v.toFixed(2) }, { n: 'gain', x: 50, y: 162, l: 'GAIN', def: 0.3, ...lin(0, 6), fmt: v => '×' + v.toFixed(2) }],
       switches: [{ n: 'wide', x: 50, y: 208, l: ['NORM', 'WIDE'] }],
       fc(m) { const p = m.p.tune; return m.sw && m.sw.wide ? 2000 * Math.pow(6, p) : 900 * Math.pow(5000 / 900, p); },
       sim(c) {
