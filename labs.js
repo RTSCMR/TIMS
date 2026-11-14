@@ -41,7 +41,7 @@
   const K7 = v => [['vco', 'f0', 100000], ['vco', 'gain', 5000], ['dc', 'v', v], ['audio', 'f', 500]];
   // ---------- Lab 9 ----------
   const W9 = [['audio.cos', 'counter.analog', 'r'], ['audio.cos', 'dsw.in1', 'b'], ['audio.cos', 'scope.a1', 'r'], ['master.clk8', 'twin.clk', 'y'],
-    ['twin.q1', 'dsw.c1', 'b'], ['dsw.out', 'scope.a2', 'k'], ['dsw.out', 'lpf.in', 'b'], ['lpf.out', 'scope.b2', 'y']];
+    ['twin.q1ac', 'dsw.c1', 'b'], ['dsw.out', 'scope.a2', 'k'], ['dsw.out', 'lpf.in', 'b'], ['lpf.out', 'scope.b2', 'y']];
   const K9 = f => [['audio', 'f', f], ['twin', 'width', 25e-6], ['twin', 'delay', 10e-6], ['lpf', 'tune', 1], ['lpf', 'gain', 4.8]];
   // ---------- Lab 10 ----------
   const W10 = [['audio.sin', 'counter.analog', 'b'], ['audio.sin', 'adder.a', 'b'], ['dc.out', 'adder.b', 'y'], ['adder.out', 'util.ref', 'r'],
@@ -131,7 +131,7 @@
         { t: `وصّل ${b('AUDIO cos')} بـ${b('IN 1')} في DUAL ANALOG SWITCH.`, ok: h => h.C('audio.cos', 'dsw.in1') },
         { t: `وصّل ${b('AUDIO cos')} بالسكوب (CH1 مدخل A) عشان تشوف الرسالة.`, ok: h => h.S('audio.cos') },
         { t: `وصّل ${b('8.3kHz TTL')} من MASTER SIGNALS بـ${b('CLK')} في TWIN PULSE GENERATOR، ولف ${b('WIDTH')} للآخر.`, ok: h => h.C('master.clk8', 'twin.clk') && h.v('twin', 'width') > 23.5e-6 },
-        { t: `وصّل خرج الـTWIN (${b('Q1')}، أو المقبس الأصفر ${b('Q1 (AC)')} اللي فوقه زي تشبيك الدكتورة) بـ${b('CONTROL 1')} في DUAL ANALOG SWITCH.`, ok: h => h.C('twin.q1', 'dsw.c1') || h.C('twin.q1ac', 'dsw.c1') || h.C('twin.q2', 'dsw.c1') },
+        { t: `وصّل المقبس الأصفر ${b('Q1 (AC)')} في الـTWIN (اللي جنب DELAY) بـ${b('CONTROL 1')} في DUAL ANALOG SWITCH. (Q1 الأحمر تحته يشتغل بعد.)`, ok: h => h.C('twin.q1', 'dsw.c1') || h.C('twin.q1ac', 'dsw.c1') || h.C('twin.q2', 'dsw.c1') },
         { t: `وصّل ${b('OUT')} حق الـDUAL ANALOG SWITCH بالسكوب (CH2 مدخل A) وشوف الإشارة المعيّنة.`, ok: h => h.S('dsw.out') },
         { t: `وصّل نفس الـ${b('OUT')} بـ${b('IN')} في TUNEABLE LPF.`, ok: h => h.C('dsw.out', 'lpf.in') },
         { t: `وصّل ${b('OUT')} حق الـLPF بالسكوب (CH2 مدخل B وحوّل مفتاح CH2 على B). لف ${b('TUNE')} للآخر، واضبط ${b('GAIN')} لين ارتفاعها يساوي الرسالة.`, ok: h => h.S('lpf.out') && h.v('lpf', 'tune') > 0.95 },
